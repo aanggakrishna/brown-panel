@@ -43,22 +43,23 @@ User List
 @push('scripts')
 <script>
 $(document).ready(function() {
-    $('#users-table').DataTable({
+    var table = $('#users-table').DataTable({
         processing: true,
         serverSide: true,
-        ajax: '{{ route('users.index') }}',
+        ajax: "{{ route('users.index') }}",
         columns: [
-            { data: 'id', name: 'id' },
-            { data: 'name', name: 'name' },
-            { data: 'email', name: 'email' },
-            { data: 'username', name: 'username' },
-            { data: 'roles', name: 'roles', orderable: false, searchable: false },
-            { data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center' }
+            {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
+            {data: 'name', name: 'name'},
+            {data: 'email', name: 'email'},
+            {data: 'roles', name: 'roles', orderable: false, searchable: false},
+            {data: 'action', name: 'action', orderable: false, searchable: false}
         ],
-        order: [[0, 'asc']],
-        language: {
-            search: '',
-            searchPlaceholder: 'Search users...'
+        drawCallback: function() {
+            // Initialize Bootstrap tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
         }
     });
 });

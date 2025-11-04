@@ -25,6 +25,7 @@ class UsersController extends Controller
             $users = User::with('roles');
 
             return DataTables::of($users)
+                ->addIndexColumn()
                 ->addColumn('roles', function ($user) {
                     if ($user->roles->isEmpty()) {
                         return '<span class="badge bg-secondary">No Role</span>';
@@ -40,17 +41,17 @@ class UsersController extends Controller
 
                     return '
                         <div class="btn-group btn-group-sm" role="group">
-                            <a href="' . $showUrl . '" class="btn btn-info-gradient" title="Show">
-                                👁️ View
+                            <a href="' . $showUrl . '" class="btn btn-info-gradient" data-bs-toggle="tooltip" title="View">
+                                👁️
                             </a>
-                            <a href="' . $editUrl . '" class="btn btn-warning-gradient" title="Edit">
-                                ✏️ Edit
+                            <a href="' . $editUrl . '" class="btn btn-warning-gradient" data-bs-toggle="tooltip" title="Edit">
+                                ✏️
                             </a>
                             <form action="' . $deleteUrl . '" method="POST" style="display:inline;" onsubmit="return confirm(\'Are you sure?\');">
                                 ' . csrf_field() . '
                                 ' . method_field('DELETE') . '
-                                <button type="submit" class="btn btn-danger-gradient" title="Delete">
-                                    🗑️ Delete
+                                <button type="submit" class="btn btn-danger-gradient" data-bs-toggle="tooltip" title="Delete">
+                                    🗑️
                                 </button>
                             </form>
                         </div>

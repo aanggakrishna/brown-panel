@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title')
-Role list
+Departments
 @endsection
 
 @section('content')
@@ -10,11 +10,11 @@ Role list
         <div class="card-header">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <h5 class="mb-1">Roles</h5>
-                    <h6 class="card-subtitle text-muted">Manage your roles here.</h6>
+                    <h5 class="mb-1">Departments</h5>
+                    <h6 class="card-subtitle text-muted">Manage department data here.</h6>
                 </div>
-                <a href="{{ route('roles.create') }}" class="btn btn-primary-gradient">
-                    <i class="cil-shield-alt me-1"></i> Add Role
+                <a href="{{ route('departments.create') }}" class="btn btn-primary-gradient">
+                    <i class="cil-plus me-1"></i> Add Department
                 </a>
             </div>
         </div>
@@ -23,12 +23,15 @@ Role list
                 @include('layouts.includes.messages')
             </div>
 
-            <table id="roles-table" class="table table-striped table-hover w-100">
+            <table id="departments-table" class="table table-striped table-hover w-100">
                 <thead>
                     <tr>
                         <th>ID</th>
                         <th>Name</th>
-                        <th>Permissions</th>
+                        <th>Code</th>
+                        <th>Branch</th>
+                        <th>Description</th>
+                        <th>Status</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -41,23 +44,19 @@ Role list
 @push('scripts')
 <script>
 $(document).ready(function() {
-    $('#roles-table').DataTable({
+    $('#departments-table').DataTable({
         processing: true,
         serverSide: true,
-        ajax: '{{ route('roles.index') }}',
+        ajax: "{{ route('departments.index') }}",
         columns: [
-            { data: 'id', name: 'id' },
-            { data: 'name', name: 'name' },
-            { data: 'permissions', name: 'permissions', orderable: false, searchable: false },
-            { data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center' }
+            {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
+            {data: 'name', name: 'name'},
+            {data: 'branch_name', name: 'branch.name'},
+            {data: 'description', name: 'description'},
+            {data: 'status', name: 'status'},
+            {data: 'action', name: 'action', orderable: false, searchable: false}
         ],
-        order: [[0, 'asc']],
-        language: {
-            search: '',
-            searchPlaceholder: 'Search roles...'
-        },
         drawCallback: function() {
-            // Initialize Bootstrap tooltips
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
             var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
                 return new bootstrap.Tooltip(tooltipTriggerEl);

@@ -59,5 +59,17 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::patch('/{user}/update', 'UsersController@update')->name('users.update');
             Route::delete('/{user}/delete', 'UsersController@destroy')->name('users.destroy');
         });
+
+        /**
+         * Master Data Routes
+         */
+        Route::resource('banks', BankController::class);
+        Route::resource('departments', DepartmentController::class);
+        Route::resource('job-titles', JobTitleController::class);
+        Route::resource('branches', BranchController::class);
+        Route::resource('employment-statuses', EmploymentStatusController::class);
+        Route::resource('position-levels', PositionLevelController::class);
+        Route::resource('leave-types', LeaveTypeController::class);
+        Route::resource('shifts', ShiftController::class);
     });
 });

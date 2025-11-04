@@ -35,20 +35,78 @@
         </a>
     </li>
 
-    <li class="nav-group" aria-expanded="false">
+    <li class="nav-title">Master Data</li>
+
+    <li class="nav-group {{ request()->is('banks*') || request()->is('departments*') || request()->is('job-titles*') || request()->is('branches*') || request()->is('employment-statuses*') || request()->is('position-levels*') || request()->is('leave-types*') || request()->is('shifts*') ? 'show' : '' }}">
         <a class="nav-link nav-group-toggle" href="#">
             <svg class="nav-icon">
-                <use xlink:href="{{ asset('icons/coreui.svg#cil-star') }}"></use>
+                <use xlink:href="{{ asset('icons/coreui.svg#cil-layers') }}"></use>
             </svg>
-            Two-level menu
+            Master Data HRIS
         </a>
-        <ul class="nav-group-items" style="height: 0px;">
+        <ul class="nav-group-items">
             <li class="nav-item">
-                <a class="nav-link" href="#" target="_top">
+                <a class="nav-link {{ request()->is('banks*') ? 'active' : ''}}" href="{{ route('banks.index') }}">
                     <svg class="nav-icon">
-                        <use xlink:href="{{ asset('icons/coreui.svg#cil-bug') }}"></use>
+                        <use xlink:href="{{ asset('icons/coreui.svg#cil-institution') }}"></use>
                     </svg>
-                    Child menu
+                    Banks
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ request()->is('branches*') ? 'active' : ''}}" href="{{ route('branches.index') }}">
+                    <svg class="nav-icon">
+                        <use xlink:href="{{ asset('icons/coreui.svg#cil-location-pin') }}"></use>
+                    </svg>
+                    Branches
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ request()->is('departments*') ? 'active' : ''}}" href="{{ route('departments.index') }}">
+                    <svg class="nav-icon">
+                        <use xlink:href="{{ asset('icons/coreui.svg#cil-sitemap') }}"></use>
+                    </svg>
+                    Departments
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ request()->is('job-titles*') ? 'active' : ''}}" href="{{ route('job-titles.index') }}">
+                    <svg class="nav-icon">
+                        <use xlink:href="{{ asset('icons/coreui.svg#cil-briefcase') }}"></use>
+                    </svg>
+                    Job Titles
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ request()->is('position-levels*') ? 'active' : ''}}" href="{{ route('position-levels.index') }}">
+                    <svg class="nav-icon">
+                        <use xlink:href="{{ asset('icons/coreui.svg#cil-chart-line') }}"></use>
+                    </svg>
+                    Position Levels
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ request()->is('employment-statuses*') ? 'active' : ''}}" href="{{ route('employment-statuses.index') }}">
+                    <svg class="nav-icon">
+                        <use xlink:href="{{ asset('icons/coreui.svg#cil-id-badge') }}"></use>
+                    </svg>
+                    Employment Status
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ request()->is('leave-types*') ? 'active' : ''}}" href="{{ route('leave-types.index') }}">
+                    <svg class="nav-icon">
+                        <use xlink:href="{{ asset('icons/coreui.svg#cil-calendar') }}"></use>
+                    </svg>
+                    Leave Types
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link {{ request()->is('shifts*') ? 'active' : ''}}" href="{{ route('shifts.index') }}">
+                    <svg class="nav-icon">
+                        <use xlink:href="{{ asset('icons/coreui.svg#cil-clock') }}"></use>
+                    </svg>
+                    Shifts
                 </a>
             </li>
         </ul>

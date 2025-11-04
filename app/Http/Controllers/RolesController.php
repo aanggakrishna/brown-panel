@@ -41,28 +41,15 @@ class RolesController extends Controller
                         return '<span class="badge bg-light text-dark border">' . $permission->name . '</span>';
                     })->implode(' ');
                 })
-                ->addColumn('action', function ($role) {
-                    $showUrl = route('roles.show', $role->id);
-                    $editUrl = route('roles.edit', $role->id);
-                    $deleteUrl = route('roles.destroy', $role->id);
+                ->addColumn('action', function ($row) {
+                    $viewBtn = '<a href="' . route('roles.show', $row->id) . '" class="btn btn-info btn-sm" data-bs-toggle="tooltip" title="View">👁️</a>';
+                    $editBtn = '<a href="' . route('roles.edit', $row->id) . '" class="btn btn-primary btn-sm" data-bs-toggle="tooltip" title="Edit">✏️</a>';
+                    $deleteBtn = '<form action="' . route('roles.destroy', $row->id) . '" method="POST" style="display:inline;">
+                        ' . csrf_field() . method_field('DELETE') . '
+                        <button type="submit" class="btn btn-danger btn-sm" data-bs-toggle="tooltip" title="Delete" onclick="return confirm(\'Are you sure?\')">🗑️</button>
+                    </form>';
 
-                    return '
-                        <div class="btn-group btn-group-sm" role="group">
-                            <a href="' . $showUrl . '" class="btn btn-info-gradient" title="Show">
-                                👁️ View
-                            </a>
-                            <a href="' . $editUrl . '" class="btn btn-warning-gradient" title="Edit">
-                                ✏️ Edit
-                            </a>
-                            <form action="' . $deleteUrl . '" method="POST" style="display:inline;" onsubmit="return confirm(\'Are you sure?\');">
-                                ' . csrf_field() . '
-                                ' . method_field('DELETE') . '
-                                <button type="submit" class="btn btn-danger-gradient" title="Delete">
-                                    🗑️ Delete
-                                </button>
-                            </form>
-                        </div>
-                    ';
+                    return $viewBtn . ' ' . $editBtn . ' ' . $deleteBtn;
                 })
                 ->rawColumns(['permissions', 'action'])
                 ->make(true);

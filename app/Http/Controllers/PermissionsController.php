@@ -20,24 +20,15 @@ class PermissionsController extends Controller
             $permissions = Permission::query();
 
             return DataTables::of($permissions)
-                ->addColumn('action', function ($permission) {
-                    $editUrl = route('permissions.edit', $permission->id);
-                    $deleteUrl = route('permissions.destroy', $permission->id);
+                ->addColumn('action', function ($row) {
+                    $viewBtn = '<a href="' . route('permissions.show', $row->id) . '" class="btn btn-info btn-sm" data-bs-toggle="tooltip" title="View">👁️</a>';
+                    $editBtn = '<a href="' . route('permissions.edit', $row->id) . '" class="btn btn-primary btn-sm" data-bs-toggle="tooltip" title="Edit">✏️</a>';
+                    $deleteBtn = '<form action="' . route('permissions.destroy', $row->id) . '" method="POST" style="display:inline;">
+                        ' . csrf_field() . method_field('DELETE') . '
+                        <button type="submit" class="btn btn-danger btn-sm" data-bs-toggle="tooltip" title="Delete" onclick="return confirm(\'Are you sure?\')">🗑️</button>
+                    </form>';
 
-                    return '
-                        <div class="btn-group btn-group-sm" role="group">
-                            <a href="' . $editUrl . '" class="btn btn-warning-gradient" title="Edit">
-                                ✏️ Edit
-                            </a>
-                            <form action="' . $deleteUrl . '" method="POST" style="display:inline;" onsubmit="return confirm(\'Are you sure?\');">
-                                ' . csrf_field() . '
-                                ' . method_field('DELETE') . '
-                                <button type="submit" class="btn btn-danger-gradient" title="Delete">
-                                    🗑️ Delete
-                                </button>
-                            </form>
-                        </div>
-                    ';
+                    return $viewBtn . ' ' . $editBtn . ' ' . $deleteBtn;
                 })
                 ->rawColumns(['action'])
                 ->make(true);
