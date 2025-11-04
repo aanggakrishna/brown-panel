@@ -12,15 +12,15 @@ class DepartmentController extends Controller
     {
         if ($request->ajax()) {
             $departments = Department::with('branch');
-            
+
             return DataTables::of($departments)
                 ->addIndexColumn()
                 ->addColumn('branch_name', function ($department) {
                     return $department->branch ? $department->branch->name : '-';
                 })
                 ->addColumn('status', function ($department) {
-                    return $department->is_active 
-                        ? '<span class="badge bg-success">Active</span>' 
+                    return $department->is_active
+                        ? '<span class="badge bg-success">Active</span>'
                         : '<span class="badge bg-danger">Inactive</span>';
                 })
                 ->addColumn('action', function ($department) {
