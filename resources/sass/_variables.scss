@@ -1,7 +1,34 @@
+// Modern Brown-Orange Color Palette
+$brown-orange-900: #5D3A1A;  // Dark brown
+$brown-orange-800: #734A28;
+$brown-orange-700: #8B5E34;
+$brown-orange-600: #A47148;
+$brown-orange-500: #C17F4C;  // Medium brown-orange
+$brown-orange-400: #D49A6A;
+$brown-orange-300: #E4B894;
+$brown-orange-200: #F0D5BE;
+$brown-orange-100: #F9EDE2;
+$brown-orange-50:  #FDF8F4;
+
+// Accent Colors
+$orange-accent:    #E67E22;  // Vibrant orange
+$orange-accent-light: #F39C12;
+$orange-accent-dark: #D35400;
+
+// Neutral Colors
+$neutral-900: #2C1810;
+$neutral-800: #3D2417;
+$neutral-700: #4E3020;
+$neutral-600: #6B4423;
+$neutral-100: #F5F1ED;
+$neutral-50:  #FAFAF9;
+
 // Body
-$body-bg: #f8fafc;
+$body-bg: $brown-orange-50;
+$body-color: $neutral-900;
 
 // Typography
-$font-family-sans-serif: 'Nunito', sans-serif;
+$font-family-sans-serif: 'Inter', 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 $font-size-base: 0.9rem;
 $line-height-base: 1.6;
+$headings-font-weight: 600;

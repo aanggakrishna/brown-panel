@@ -8,6 +8,7 @@ use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Route;
 use Spatie\Permission\Models\Permission;
+use Yajra\DataTables\Facades\DataTables;
 
 class RolesController extends Controller
 {
@@ -20,19 +21,56 @@ class RolesController extends Controller
     {
 
     }
-    
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
-    {   
-        $roles = Role::orderBy('id','DESC')->paginate(5);
-        return view('roles.index',compact('roles'))
-            ->with('i', ($request->input('page', 1) - 1) * 5);
+    {
+        if ($request->ajax()) {
+            $roles = Role::with('permissions');
+            
+            return DataTables::of($roles)
+                ->addColumn('permissions', function ($role) {
+                    if ($role->permissions->isEmpty()) {
+                        return '<span class="badge bg-secondary">No Permissions</span>';
+                    }
+                    return $role->permissions->map(function ($permission) {
+                        return '<span class="badge bg-light text-dark border">' . $permission->name . '</span>';
+                    })->implode(' ');
+                })
+                ->addColumn('action', function ($role) {
+                    $showUrl = route('roles.show', $role->id);
+                    $editUrl = route('roles.edit', $role->id);
+                    $deleteUrl = route('roles.destroy', $role->id);
+
+                    return '
+                        <div class="btn-group btn-group-sm" role="group">
+                            <a href="' . $showUrl . '" class="btn btn-info-gradient" title="Show">
+                                👁️ View
+                            </a>
+                            <a href="' . $editUrl . '" class="btn btn-warning-gradient" title="Edit">
+                                ✏️ Edit
+                            </a>
+                            <form action="' . $deleteUrl . '" method="POST" style="display:inline;" onsubmit="return confirm(\'Are you sure?\');">
+                                ' . csrf_field() . '
+                                ' . method_field('DELETE') . '
+                                <button type="submit" class="btn btn-danger-gradient" title="Delete">
+                                    🗑️ Delete
+                                </button>
+                            </form>
+                        </div>
+                    ';
+                })
+                ->rawColumns(['permissions', 'action'])
+                ->make(true);
+        }
+
+        return view('roles.index');
     }
-    
+
     /**
      * Show the form for creating a new resource.
      *
@@ -43,7 +81,7 @@ class RolesController extends Controller
         $permissions = Permission::get();
         return view('roles.create', compact('permissions'));
     }
-    
+
     /**
      * Store a newly created resource in storage.
      *
@@ -56,10 +94,10 @@ class RolesController extends Controller
             'name' => 'required|unique:roles,name',
             'permission' => 'required',
         ]);
-    
+
         $role = Role::create(['name' => $request->get('name')]);
         $role->syncPermissions($request->get('permission'));
-    
+
         return redirect()->route('roles.index')
                         ->with('success','Role created successfully');
     }
@@ -74,10 +112,10 @@ class RolesController extends Controller
     {
         $role = $role;
         $rolePermissions = $role->permissions;
-    
+
         return view('roles.show', compact('role', 'rolePermissions'));
     }
-    
+
     /**
      * Show the form for editing the specified resource.
      *
@@ -89,10 +127,10 @@ class RolesController extends Controller
         $role = $role;
         $rolePermissions = $role->permissions->pluck('name')->toArray();
         $permissions = Permission::get();
-    
+
         return view('roles.edit', compact('role', 'rolePermissions', 'permissions'));
     }
-    
+
     /**
      * Update the specified resource in storage.
      *
@@ -106,11 +144,11 @@ class RolesController extends Controller
             'name' => 'required',
             'permission' => 'required',
         ]);
-        
+
         $role->update($request->only('name'));
-    
+
         $role->syncPermissions($request->get('permission'));
-    
+
         return redirect()->route('roles.index')
                         ->with('success','Role updated successfully');
     }

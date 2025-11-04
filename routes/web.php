@@ -22,6 +22,10 @@ Route::get('/about', function () {
     return view('about');
 });
 
+Route::get('/components-demo', function () {
+    return view('components-demo');
+})->name('components.demo');
+
 /**
  * Auth Routes
  */
@@ -37,11 +41,11 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
         Route::get('/dashboard', [App\Http\Controllers\HomeController::class, 'index'])->name('dashboard');
         /**
          * Role Routes
-         */    
+         */
         Route::resource('roles', RolesController::class);
         /**
          * Permission Routes
-         */    
+         */
         Route::resource('permissions', PermissionsController::class);
         /**
          * User Routes

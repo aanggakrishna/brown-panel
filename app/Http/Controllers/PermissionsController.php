@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Spatie\Permission\Models\Permission;
+use Yajra\DataTables\Facades\DataTables;
 
 class PermissionsController extends Controller
 {
@@ -13,13 +14,36 @@ class PermissionsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $permissions = Permission::all();
+        if ($request->ajax()) {
+            $permissions = Permission::query();
+            
+            return DataTables::of($permissions)
+                ->addColumn('action', function ($permission) {
+                    $editUrl = route('permissions.edit', $permission->id);
+                    $deleteUrl = route('permissions.destroy', $permission->id);
 
-        return view('permissions.index', [
-            'permissions' => $permissions
-        ]);
+                    return '
+                        <div class="btn-group btn-group-sm" role="group">
+                            <a href="' . $editUrl . '" class="btn btn-warning-gradient" title="Edit">
+                                ✏️ Edit
+                            </a>
+                            <form action="' . $deleteUrl . '" method="POST" style="display:inline;" onsubmit="return confirm(\'Are you sure?\');">
+                                ' . csrf_field() . '
+                                ' . method_field('DELETE') . '
+                                <button type="submit" class="btn btn-danger-gradient" title="Delete">
+                                    🗑️ Delete
+                                </button>
+                            </form>
+                        </div>
+                    ';
+                })
+                ->rawColumns(['action'])
+                ->make(true);
+        }
+
+        return view('permissions.index');
     }
 
     /**

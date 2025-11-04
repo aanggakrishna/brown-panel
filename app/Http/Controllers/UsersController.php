@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\ProfileUpdateRequest;
+use Yajra\DataTables\Facades\DataTables;
 
 /**
  *
@@ -18,11 +19,48 @@ class UsersController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::latest()->paginate(10);
+        if ($request->ajax()) {
+            $users = User::with('roles');
+            
+            return DataTables::of($users)
+                ->addColumn('roles', function ($user) {
+                    if ($user->roles->isEmpty()) {
+                        return '<span class="badge bg-secondary">No Role</span>';
+                    }
+                    return $user->roles->map(function ($role) {
+                        return '<span class="badge bg-primary-gradient">' . $role->name . '</span>';
+                    })->implode(' ');
+                })
+                ->addColumn('action', function ($user) {
+                    $showUrl = route('users.show', $user->id);
+                    $editUrl = route('users.edit', $user->id);
+                    $deleteUrl = route('users.destroy', $user->id);
 
-        return view('users.index', compact('users'));
+                    return '
+                        <div class="btn-group btn-group-sm" role="group">
+                            <a href="' . $showUrl . '" class="btn btn-info-gradient" title="Show">
+                                👁️ View
+                            </a>
+                            <a href="' . $editUrl . '" class="btn btn-warning-gradient" title="Edit">
+                                ✏️ Edit
+                            </a>
+                            <form action="' . $deleteUrl . '" method="POST" style="display:inline;" onsubmit="return confirm(\'Are you sure?\');">
+                                ' . csrf_field() . '
+                                ' . method_field('DELETE') . '
+                                <button type="submit" class="btn btn-danger-gradient" title="Delete">
+                                    🗑️ Delete
+                                </button>
+                            </form>
+                        </div>
+                    ';
+                })
+                ->rawColumns(['roles', 'action'])
+                ->make(true);
+        }
+
+        return view('users.index');
     }
 
     /**

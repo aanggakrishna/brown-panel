@@ -7,60 +7,60 @@ User List
 @section('content')
 <div class="bg-light rounded">
     <div class="card">
+        <div class="card-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h5 class="mb-1">Users</h5>
+                    <h6 class="card-subtitle text-muted">Manage your users here.</h6>
+                </div>
+                <a href="{{ route('users.create') }}" class="btn btn-primary-gradient">
+                    <i class="cil-user-plus me-1"></i> Add User
+                </a>
+            </div>
+        </div>
         <div class="card-body">
-            <h5 class="card-title">Users</h5>
-            <h6 class="card-subtitle mb-2 text-muted">Manage your users here.</h6>
-
-            <div class="mt-2">
+            <div class="mt-2 mb-3">
                 @include('layouts.includes.messages')
             </div>
 
-            <div class="mb-2 text-end">
-                <a href="{{ route('users.create') }}" class="btn btn-primary btn-sm float-right">Add user</a>
-            </div>
-
-            <table class="table table-striped">
+            <table id="users-table" class="table table-striped table-hover w-100">
                 <thead>
                     <tr>
-                        <th scope="col" width="1%">#</th>
-                        <th scope="col" width="15%">Name</th>
-                        <th scope="col">Email</th>
-                        <th scope="col" width="10%">Username</th>
-                        <th scope="col" width="10%">Roles</th>
-                        <th scope="col" width="1%" colspan="3"></th>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Username</th>
+                        <th>Roles</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
-                <tbody>
-                    @foreach($users as $user)
-                    <tr>
-                        <th scope="row">{{ $user->id }}</th>
-                        <td>{{ $user->name }}</td>
-                        <td>{{ $user->email }}</td>
-                        <td>{{ $user->username }}</td>
-                        <td>
-                            @foreach($user->roles as $role)
-                            <span class="badge bg-primary">{{ $role->name }}</span>
-                            @endforeach
-                        </td>
-                        <td><a href="{{ route('users.show', $user->id) }}" class="btn btn-warning btn-sm">Show</a></td>
-                        <td><a href="{{ route('users.edit', $user->id) }}" class="btn btn-info btn-sm">Edit</a></td>
-                        <td>
-                            <form action="{{ route('users.destroy', $user->id) }}" method="POST" style="display:inline;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                            </form>
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
             </table>
-
-            <div class="d-flex">
-                {!! $users->links() !!}
-            </div>
-
         </div>
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+$(document).ready(function() {
+    $('#users-table').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: '{{ route('users.index') }}',
+        columns: [
+            { data: 'id', name: 'id' },
+            { data: 'name', name: 'name' },
+            { data: 'email', name: 'email' },
+            { data: 'username', name: 'username' },
+            { data: 'roles', name: 'roles', orderable: false, searchable: false },
+            { data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center' }
+        ],
+        order: [[0, 'asc']],
+        language: {
+            search: '',
+            searchPlaceholder: 'Search users...'
+        }
+    });
+});
+</script>
+@endpush

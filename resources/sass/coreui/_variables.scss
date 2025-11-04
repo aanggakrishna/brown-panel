@@ -3,7 +3,72 @@
 // Variables should follow the `$component-state-property-size` formula for
 // consistent naming. Ex: $nav-link-disabled-color and $modal-content-box-shadow-xs.
 
-// Color system
+// Color system - Modern Brown-Orange Theme
+
+$white:     #fff !default;
+$gray-base: #5D3A1A !default;
+$gray-100:  #F9EDE2 !default;
+$gray-200:  #F0D5BE !default;
+$gray-300:  #E4B894 !default;
+$gray-400:  #D49A6A !default;
+$gray-500:  #C17F4C !default;
+$gray-600:  #A47148 !default;
+$gray-700:  #8B5E34 !default;
+$gray-800:  #734A28 !default;
+$gray-900:  #5D3A1A !default;
+$black:     #2C1810 !default;
+
+// Theme colors with brown-orange palette
+$blue:    #8B7355 !default;
+$indigo:  #9D6B53 !default;
+$purple:  #A0826D !default;
+$pink:    #C8856A !default;
+$red:     #C94C4C !default;
+$orange:  #E67E22 !default;
+$yellow:  #F39C12 !default;
+$green:   #52A068 !default;
+$teal:    #4DB8A3 !default;
+$cyan:    #5DADE2 !default;
+
+// Primary color - Brown-Orange
+$primary-dark:  #5D3A1A !default;
+$primary-base:  #C17F4C !default;
+$primary-50:    #E4B894 !default;
+$primary-25:    #F0D5BE !default;
+
+$primary:       $primary-base !default;
+$secondary:     #8B5E34 !default;
+$success:       #52A068 !default;
+$info:          #5DADE2 !default;
+$warning:       #F39C12 !default;
+$danger:        #C94C4C !default;
+$light:         #F9EDE2 !default;
+$dark:          #5D3A1A !default;
+
+// Body
+$body-bg:                   #FDFBF8 !default;
+$body-color:                #2C1810 !default;
+
+// Links
+$link-color:                              $primary !default;
+$link-decoration:                         none !default;
+$link-hover-color:                        darken($primary, 15%) !default;
+$link-hover-decoration:                   underline !default;
+
+// Border
+$border-color:                $gray-300 !default;
+$border-radius:               .5rem !default;
+$border-radius-sm:            .375rem !default;
+$border-radius-lg:            .75rem !default;
+
+// Shadows for depth
+$box-shadow:                  0 .5rem 1rem rgba($primary-dark, .08) !default;
+$box-shadow-sm:               0 .125rem .25rem rgba($primary-dark, .05) !default;
+$box-shadow-lg:               0 1rem 3rem rgba($primary-dark, .12) !default;
+
+// Enable rounded corners and shadows
+$enable-rounded:                    true !default;
+$enable-shadows:                    true !default;
 
 // $white:     #fff !default;
 // $gray-base: #3c4b64 !default;
