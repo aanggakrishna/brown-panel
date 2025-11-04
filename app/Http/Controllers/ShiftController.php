@@ -61,7 +61,7 @@ class ShiftController extends Controller
      */
     public function create()
     {
-        //
+        return view('masterdata.shifts.create');
     }
 
     /**
@@ -69,38 +69,65 @@ class ShiftController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'start_time' => 'required|date_format:H:i',
+            'end_time' => 'required|date_format:H:i|after:start_time',
+            'duration_hours' => 'required|integer|min:1|max:24',
+            'is_active' => 'boolean',
+        ]);
+
+        Shift::create($request->all());
+
+        return redirect()->route('shifts.index')
+            ->with('success', 'Shift created successfully.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Shift $shift)
     {
-        //
+        return view('masterdata.shifts.show', compact('shift'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Shift $shift)
     {
-        //
+        return view('masterdata.shifts.edit', compact('shift'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Shift $shift)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'start_time' => 'required|date_format:H:i',
+            'end_time' => 'required|date_format:H:i|after:start_time',
+            'duration_hours' => 'required|integer|min:1|max:24',
+            'is_active' => 'boolean',
+        ]);
+
+        $shift->update($request->all());
+
+        return redirect()->route('shifts.index')
+            ->with('success', 'Shift updated successfully.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Shift $shift)
     {
-        //
+        $shift->delete();
+
+        return redirect()->route('shifts.index')
+            ->with('success', 'Shift deleted successfully.');
     }
 }

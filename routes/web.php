@@ -83,5 +83,20 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
         Route::resource('position-levels', PositionLevelController::class);
         Route::resource('leave-types', LeaveTypeController::class);
         Route::resource('shifts', ShiftController::class);
+
+        /**
+         * Leave Application Routes
+         */
+        Route::resource('leave-applications', LeaveApplicationController::class);
+        Route::post('leave-applications/{leave_application}/approve', [App\Http\Controllers\LeaveApplicationController::class, 'approve'])->name('leave-applications.approve');
+        Route::post('leave-applications/{leave_application}/reject', [App\Http\Controllers\LeaveApplicationController::class, 'reject'])->name('leave-applications.reject');
+
+        /**
+         * Settings Routes
+         */
+        Route::group(['prefix' => 'settings'], function() {
+            Route::get('/company', [App\Http\Controllers\CompanySettingsController::class, 'edit'])->name('company-settings.edit');
+            Route::patch('/company', [App\Http\Controllers\CompanySettingsController::class, 'update'])->name('company-settings.update');
+        });
     });
 });

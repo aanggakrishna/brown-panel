@@ -68,7 +68,10 @@ class JobTitleController extends Controller
      */
     public function create()
     {
-        //
+        $departments = \App\Models\Department::where('is_active', true)->get();
+        $positionLevels = \App\Models\PositionLevel::where('is_active', true)->get();
+
+        return view('masterdata.job-titles.create', compact('departments', 'positionLevels'));
     }
 
     /**
@@ -76,38 +79,68 @@ class JobTitleController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'department_id' => 'required|exists:departments,id',
+            'position_level_id' => 'required|exists:position_levels,id',
+            'is_active' => 'boolean',
+        ]);
+
+        JobTitle::create($request->all());
+
+        return redirect()->route('job-titles.index')
+            ->with('success', 'Job title created successfully.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(JobTitle $jobTitle)
     {
-        //
+        $jobTitle->load(['department.branch', 'positionLevel']);
+
+        return view('masterdata.job-titles.show', compact('jobTitle'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(JobTitle $jobTitle)
     {
-        //
+        $departments = \App\Models\Department::where('is_active', true)->get();
+        $positionLevels = \App\Models\PositionLevel::where('is_active', true)->get();
+
+        return view('masterdata.job-titles.edit', compact('jobTitle', 'departments', 'positionLevels'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, JobTitle $jobTitle)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'department_id' => 'required|exists:departments,id',
+            'position_level_id' => 'required|exists:position_levels,id',
+            'is_active' => 'boolean',
+        ]);
+
+        $jobTitle->update($request->all());
+
+        return redirect()->route('job-titles.index')
+            ->with('success', 'Job title updated successfully.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(JobTitle $jobTitle)
     {
-        //
+        $jobTitle->delete();
+
+        return redirect()->route('job-titles.index')
+            ->with('success', 'Job title deleted successfully.');
     }
 }

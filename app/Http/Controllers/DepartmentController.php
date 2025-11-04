@@ -54,10 +54,61 @@ class DepartmentController extends Controller
         }
 
         return view('masterdata.departments.index');
-    }    public function create() { }
-    public function store(Request $request) { }
-    public function show(Department $department) { }
-    public function edit(Department $department) { }
-    public function update(Request $request, Department $department) { }
-    public function destroy(Department $department) { }
+    }    public function create()
+    {
+        $branches = \App\Models\Branch::where('is_active', true)->orderBy('name')->get();
+        return view('masterdata.departments.create', compact('branches'));
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'code' => 'nullable|string|max:50|unique:departments,code',
+            'description' => 'nullable|string|max:1000',
+            'branch_id' => 'required|exists:branches,id',
+            'is_active' => 'boolean'
+        ]);
+
+        Department::create($request->all());
+
+        return redirect()->route('departments.index')
+            ->with('success', 'Department created successfully.');
+    }
+
+    public function show(Department $department)
+    {
+        $department->load('branch');
+        return view('masterdata.departments.show', compact('department'));
+    }
+
+    public function edit(Department $department)
+    {
+        $branches = \App\Models\Branch::where('is_active', true)->orderBy('name')->get();
+        return view('masterdata.departments.edit', compact('department', 'branches'));
+    }
+
+    public function update(Request $request, Department $department)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'code' => 'nullable|string|max:50|unique:departments,code,' . $department->id,
+            'description' => 'nullable|string|max:1000',
+            'branch_id' => 'required|exists:branches,id',
+            'is_active' => 'boolean'
+        ]);
+
+        $department->update($request->all());
+
+        return redirect()->route('departments.index')
+            ->with('success', 'Department updated successfully.');
+    }
+
+    public function destroy(Department $department)
+    {
+        $department->delete();
+
+        return redirect()->route('departments.index')
+            ->with('success', 'Department deleted successfully.');
+    }
 }

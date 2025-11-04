@@ -63,7 +63,7 @@ class LeaveTypeController extends Controller
      */
     public function create()
     {
-        //
+        return view('masterdata.leave-types.create');
     }
 
     /**
@@ -71,38 +71,63 @@ class LeaveTypeController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'max_days_per_year' => 'required|integer|min:0',
+            'is_paid' => 'boolean',
+            'is_active' => 'boolean',
+        ]);
+
+        LeaveType::create($request->all());
+
+        return redirect()->route('leave-types.index')
+            ->with('success', 'Leave type created successfully.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(LeaveType $leaveType)
     {
-        //
+        return view('masterdata.leave-types.show', compact('leaveType'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(LeaveType $leaveType)
     {
-        //
+        return view('masterdata.leave-types.edit', compact('leaveType'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, LeaveType $leaveType)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'max_days_per_year' => 'required|integer|min:0',
+            'is_paid' => 'boolean',
+            'is_active' => 'boolean',
+        ]);
+
+        $leaveType->update($request->all());
+
+        return redirect()->route('leave-types.index')
+            ->with('success', 'Leave type updated successfully.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(LeaveType $leaveType)
     {
-        //
+        $leaveType->delete();
+
+        return redirect()->route('leave-types.index')
+            ->with('success', 'Leave type deleted successfully.');
     }
 }

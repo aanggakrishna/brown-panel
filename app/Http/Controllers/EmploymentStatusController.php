@@ -58,7 +58,7 @@ class EmploymentStatusController extends Controller
      */
     public function create()
     {
-        //
+        return view('masterdata.employment-statuses.create');
     }
 
     /**
@@ -66,38 +66,59 @@ class EmploymentStatusController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'is_active' => 'boolean',
+        ]);
+
+        EmploymentStatus::create($request->all());
+
+        return redirect()->route('employment-statuses.index')
+            ->with('success', 'Employment status created successfully.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(EmploymentStatus $employmentStatus)
     {
-        //
+        return view('masterdata.employment-statuses.show', compact('employmentStatus'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(EmploymentStatus $employmentStatus)
     {
-        //
+        return view('masterdata.employment-statuses.edit', compact('employmentStatus'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, EmploymentStatus $employmentStatus)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'is_active' => 'boolean',
+        ]);
+
+        $employmentStatus->update($request->all());
+
+        return redirect()->route('employment-statuses.index')
+            ->with('success', 'Employment status updated successfully.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(EmploymentStatus $employmentStatus)
     {
-        //
+        $employmentStatus->delete();
+
+        return redirect()->route('employment-statuses.index')
+            ->with('success', 'Employment status deleted successfully.');
     }
 }
