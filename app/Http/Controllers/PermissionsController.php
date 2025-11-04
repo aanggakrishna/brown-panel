@@ -18,7 +18,7 @@ class PermissionsController extends Controller
     {
         if ($request->ajax()) {
             $permissions = Permission::query();
-            
+
             return DataTables::of($permissions)
                 ->addColumn('action', function ($permission) {
                     $editUrl = route('permissions.edit', $permission->id);

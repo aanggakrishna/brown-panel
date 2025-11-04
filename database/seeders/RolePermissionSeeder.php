@@ -25,7 +25,7 @@ class RolePermissionSeeder extends Seeder
             'villa-edit',
             'villa-delete',
             'villa-view',
-            
+
             // Booking Management
             'booking-list',
             'booking-create',
@@ -34,14 +34,14 @@ class RolePermissionSeeder extends Seeder
             'booking-view',
             'booking-approve',
             'booking-cancel',
-            
+
             // Guest Management
             'guest-list',
             'guest-create',
             'guest-edit',
             'guest-delete',
             'guest-view',
-            
+
             // Payment Management
             'payment-list',
             'payment-create',
@@ -49,34 +49,34 @@ class RolePermissionSeeder extends Seeder
             'payment-delete',
             'payment-view',
             'payment-verify',
-            
+
             // Staff Management
             'staff-list',
             'staff-create',
             'staff-edit',
             'staff-delete',
             'staff-view',
-            
+
             // Maintenance Management
             'maintenance-list',
             'maintenance-create',
             'maintenance-edit',
             'maintenance-delete',
             'maintenance-view',
-            
+
             // Report Management
             'report-view',
             'report-export',
             'report-financial',
             'report-occupancy',
-            
+
             // User Management
             'user-list',
             'user-create',
             'user-edit',
             'user-delete',
             'user-view',
-            
+
             // Role & Permission Management
             'role-list',
             'role-create',
@@ -86,7 +86,7 @@ class RolePermissionSeeder extends Seeder
             'permission-create',
             'permission-edit',
             'permission-delete',
-            
+
             // Settings
             'settings-view',
             'settings-edit',

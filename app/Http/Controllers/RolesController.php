@@ -31,7 +31,7 @@ class RolesController extends Controller
     {
         if ($request->ajax()) {
             $roles = Role::with('permissions');
-            
+
             return DataTables::of($roles)
                 ->addColumn('permissions', function ($role) {
                     if ($role->permissions->isEmpty()) {

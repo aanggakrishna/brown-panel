@@ -23,7 +23,7 @@ class UsersController extends Controller
     {
         if ($request->ajax()) {
             $users = User::with('roles');
-            
+
             return DataTables::of($users)
                 ->addColumn('roles', function ($user) {
                     if ($user->roles->isEmpty()) {
