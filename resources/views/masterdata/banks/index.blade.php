@@ -46,7 +46,16 @@ $(document).ready(function() {
     $('#banks-table').DataTable({
         processing: true,
         serverSide: true,
-        ajax: "{{ route('banks.index') }}",
+        ajax: {
+            url: "{{ route('banks.index') }}",
+            type: "GET",
+            error: function(xhr, error, thrown) {
+                console.log('DataTables error:', error, thrown);
+                console.log('Response:', xhr.responseText);
+                // Hide processing indicator on error
+                $('#banks-table_processing').hide();
+            }
+        },
         columns: [
             {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
             {data: 'name', name: 'name'},
@@ -55,7 +64,14 @@ $(document).ready(function() {
             {data: 'status', name: 'status'},
             {data: 'action', name: 'action', orderable: false, searchable: false}
         ],
+        initComplete: function() {
+            // Ensure processing indicator is hidden when initialization is complete
+            $('#banks-table_processing').hide();
+        },
         drawCallback: function() {
+            // Ensure processing indicator is hidden after each draw
+            $('#banks-table_processing').hide();
+
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
             var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
                 return new bootstrap.Tooltip(tooltipTriggerEl);

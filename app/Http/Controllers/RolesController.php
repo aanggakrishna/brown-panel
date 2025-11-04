@@ -42,14 +42,27 @@ class RolesController extends Controller
                     })->implode(' ');
                 })
                 ->addColumn('action', function ($row) {
-                    $viewBtn = '<a href="' . route('roles.show', $row->id) . '" class="btn btn-info btn-sm" data-bs-toggle="tooltip" title="View">👁️</a>';
-                    $editBtn = '<a href="' . route('roles.edit', $row->id) . '" class="btn btn-primary btn-sm" data-bs-toggle="tooltip" title="Edit">✏️</a>';
-                    $deleteBtn = '<form action="' . route('roles.destroy', $row->id) . '" method="POST" style="display:inline;">
-                        ' . csrf_field() . method_field('DELETE') . '
-                        <button type="submit" class="btn btn-danger btn-sm" data-bs-toggle="tooltip" title="Delete" onclick="return confirm(\'Are you sure?\')">🗑️</button>
-                    </form>';
+                    $showUrl = route('roles.show', $row->id);
+                    $editUrl = route('roles.edit', $row->id);
+                    $deleteUrl = route('roles.destroy', $row->id);
 
-                    return $viewBtn . ' ' . $editBtn . ' ' . $deleteBtn;
+                    return '
+                        <div class="btn-group btn-group-sm" role="group">
+                            <a href="' . $showUrl . '" class="btn btn-info-gradient" data-bs-toggle="tooltip" title="View">
+                                👁️
+                            </a>
+                            <a href="' . $editUrl . '" class="btn btn-warning-gradient" data-bs-toggle="tooltip" title="Edit">
+                                ✏️
+                            </a>
+                            <form action="' . $deleteUrl . '" method="POST" style="display:inline;" onsubmit="return confirm(\'Are you sure?\');">
+                                ' . csrf_field() . '
+                                ' . method_field('DELETE') . '
+                                <button type="submit" class="btn btn-danger-gradient" data-bs-toggle="tooltip" title="Delete">
+                                    🗑️
+                                </button>
+                            </form>
+                        </div>
+                    ';
                 })
                 ->rawColumns(['permissions', 'action'])
                 ->make(true);

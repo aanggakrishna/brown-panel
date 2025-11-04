@@ -44,7 +44,16 @@ $(document).ready(function() {
     $('#roles-table').DataTable({
         processing: true,
         serverSide: true,
-        ajax: '{{ route('roles.index') }}',
+        ajax: {
+            url: '{{ route('roles.index') }}',
+            type: "GET",
+            error: function(xhr, error, thrown) {
+                console.log('DataTables error:', error, thrown);
+                console.log('Response:', xhr.responseText);
+                // Hide processing indicator on error
+                $('#roles-table_processing').hide();
+            }
+        },
         columns: [
             { data: 'id', name: 'id' },
             { data: 'name', name: 'name' },
@@ -56,7 +65,14 @@ $(document).ready(function() {
             search: '',
             searchPlaceholder: 'Search roles...'
         },
+        initComplete: function() {
+            // Ensure processing indicator is hidden when initialization is complete
+            $('#roles-table_processing').hide();
+        },
         drawCallback: function() {
+            // Ensure processing indicator is hidden after each draw
+            $('#roles-table_processing').hide();
+
             // Initialize Bootstrap tooltips
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
             var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {

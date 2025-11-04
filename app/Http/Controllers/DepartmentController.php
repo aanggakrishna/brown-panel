@@ -15,6 +15,9 @@ class DepartmentController extends Controller
 
             return DataTables::of($departments)
                 ->addIndexColumn()
+                ->addColumn('code', function ($department) {
+                    return $department->code;
+                })
                 ->addColumn('branch_name', function ($department) {
                     return $department->branch ? $department->branch->name : '-';
                 })
@@ -24,11 +27,15 @@ class DepartmentController extends Controller
                         : '<span class="badge bg-danger">Inactive</span>';
                 })
                 ->addColumn('action', function ($department) {
+                    $showUrl = route('departments.show', $department->id);
                     $editUrl = route('departments.edit', $department->id);
                     $deleteUrl = route('departments.destroy', $department->id);
 
                     return '
                         <div class="btn-group btn-group-sm" role="group">
+                            <a href="' . $showUrl . '" class="btn btn-info-gradient" data-bs-toggle="tooltip" title="View">
+                                👁️
+                            </a>
                             <a href="' . $editUrl . '" class="btn btn-warning-gradient" data-bs-toggle="tooltip" title="Edit">
                                 ✏️
                             </a>

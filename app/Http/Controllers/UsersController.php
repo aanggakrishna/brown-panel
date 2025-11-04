@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Spatie\Permission\Models\Role;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\ProfileUpdateRequest;
@@ -26,6 +27,9 @@ class UsersController extends Controller
 
             return DataTables::of($users)
                 ->addIndexColumn()
+                ->addColumn('username', function ($user) {
+                    return $user->username;
+                })
                 ->addColumn('roles', function ($user) {
                     if ($user->roles->isEmpty()) {
                         return '<span class="badge bg-secondary">No Role</span>';
@@ -37,12 +41,16 @@ class UsersController extends Controller
                 ->addColumn('action', function ($user) {
                     $showUrl = route('users.show', $user->id);
                     $editUrl = route('users.edit', $user->id);
+                    $documentsUrl = route('user-documents.index', $user->id);
                     $deleteUrl = route('users.destroy', $user->id);
 
                     return '
                         <div class="btn-group btn-group-sm" role="group">
                             <a href="' . $showUrl . '" class="btn btn-info-gradient" data-bs-toggle="tooltip" title="View">
                                 👁️
+                            </a>
+                            <a href="' . $documentsUrl . '" class="btn btn-success-gradient" data-bs-toggle="tooltip" title="Documents">
+                                📁
                             </a>
                             <a href="' . $editUrl . '" class="btn btn-warning-gradient" data-bs-toggle="tooltip" title="Edit">
                                 ✏️
@@ -71,7 +79,16 @@ class UsersController extends Controller
      */
     public function create()
     {
-        return view('users.create');
+        $roles = Role::latest()->get();
+
+        return view('users.create', [
+            'roles' => $roles,
+            'branches' => \App\Models\Branch::where('is_active', true)->get(),
+            'departments' => \App\Models\Department::where('is_active', true)->get(),
+            'jobTitles' => \App\Models\JobTitle::where('is_active', true)->get(),
+            'employmentStatuses' => \App\Models\EmploymentStatus::where('is_active', true)->get(),
+            'positionLevels' => \App\Models\PositionLevel::where('is_active', true)->get(),
+        ]);
     }
 
     /**
@@ -82,13 +99,29 @@ class UsersController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function store(User $user, StoreUserRequest $request)
+    public function store(StoreUserRequest $request)
     {
-        //For demo purposes only. When creating user or inviting a user
-        // you should create a generated random password and email it to the user
-        $user->create(array_merge($request->validated(), [
-            'password' => 'test'
-        ]));
+        $data = $request->validated();
+
+        // Handle photo upload
+        if ($request->hasFile('photo')) {
+            $photoFile = $request->file('photo');
+            $photoName = time() . '_' . uniqid() . '.' . $photoFile->getClientOriginalExtension();
+            $photoPath = $photoFile->storeAs('user-photos', $photoName, 'public');
+            $data['photo_path'] = $photoPath;
+        }
+
+        // Remove role from data as it's handled separately
+        $role = $data['role'];
+        unset($data['role']);
+
+        // Create user with default password (should be changed later)
+        $data['password'] = bcrypt('password123'); // Default password, should be changed
+
+        $user = User::create($data);
+
+        // Assign role
+        $user->assignRole($role);
 
         return redirect()->route('users.index')
             ->withSuccess(__('User created successfully.'));
@@ -103,6 +136,18 @@ class UsersController extends Controller
      */
     public function show(User $user)
     {
+        // Eager load all relationships for better performance
+        $user->load([
+            'roles',
+            'branch',
+            'department',
+            'jobTitle',
+            'positionLevel',
+            'employmentStatus',
+            'bank',
+            'documents'
+        ]);
+
         return view('users.show', [
             'user' => $user
         ]);
@@ -117,10 +162,18 @@ class UsersController extends Controller
      */
     public function edit(User $user)
     {
+        // Eager load relationships to avoid N+1 queries
+        $user->load('roles');
+
         return view('users.edit', [
             'user' => $user,
             'userRole' => $user->roles->pluck('name')->toArray(),
-            'roles' => Role::latest()->get()
+            'roles' => Role::latest()->get(),
+            'branches' => \App\Models\Branch::where('is_active', true)->get(),
+            'departments' => \App\Models\Department::where('is_active', true)->get(),
+            'jobTitles' => \App\Models\JobTitle::where('is_active', true)->get(),
+            'employmentStatuses' => \App\Models\EmploymentStatus::where('is_active', true)->get(),
+            'positionLevels' => \App\Models\PositionLevel::where('is_active', true)->get(),
         ]);
     }
 
@@ -134,11 +187,31 @@ class UsersController extends Controller
      */
     public function update(User $user, ProfileUpdateRequest $request)
     {
-        $user->update($request->validated());
+        $data = $request->validated();
 
-        $user->syncRoles($request->get('role'));
+        // Handle photo upload
+        if ($request->hasFile('photo')) {
+            // Delete old photo if exists
+            if ($user->photo_path && Storage::disk('public')->exists($user->photo_path)) {
+                Storage::disk('public')->delete($user->photo_path);
+            }
 
-        return redirect()->route('users.index')
+            $photoFile = $request->file('photo');
+            $photoName = time() . '_' . uniqid() . '.' . $photoFile->getClientOriginalExtension();
+            $photoPath = $photoFile->storeAs('user-photos', $photoName, 'public');
+            $data['photo_path'] = $photoPath;
+        }
+
+        // Remove role from data as it's handled separately
+        $role = $data['role'];
+        unset($data['role']);
+
+        $user->update($data);
+
+        // Sync role
+        $user->syncRoles([$role]);
+
+        return redirect()->route('users.show', $user)
             ->withSuccess(__('User updated successfully.'));
     }
 

@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title')
-User List
+{{ $user->name }} - Documents
 @endsection
 
 @section('content')
@@ -10,12 +10,17 @@ User List
         <div class="card-header">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <h5 class="mb-1">Users</h5>
-                    <h6 class="card-subtitle text-muted">Manage your users here.</h6>
+                    <h5 class="mb-1">{{ $user->name }} - Documents</h5>
+                    <h6 class="card-subtitle text-muted">Manage employee documents here.</h6>
                 </div>
-                <a href="{{ route('users.create') }}" class="btn btn-primary-gradient">
-                    <i class="cil-user-plus me-1"></i> Add User
-                </a>
+                <div>
+                    <a href="{{ route('user-documents.create', $user) }}" class="btn btn-primary-gradient">
+                        <i class="cil-plus me-1"></i> Upload Document
+                    </a>
+                    <a href="{{ route('users.show', $user) }}" class="btn btn-secondary ms-2">
+                        <i class="cil-arrow-left me-1"></i> Back to User
+                    </a>
+                </div>
             </div>
         </div>
         <div class="card-body">
@@ -23,14 +28,15 @@ User List
                 @include('layouts.includes.messages')
             </div>
 
-            <table id="users-table" class="table table-striped table-hover w-100">
+            <table id="user-documents-table" class="table table-striped table-hover w-100">
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Username</th>
-                        <th>Roles</th>
+                        <th>Document Type</th>
+                        <th>File Name</th>
+                        <th>File Size</th>
+                        <th>Expiry Date</th>
+                        <th>Status</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -43,34 +49,35 @@ User List
 @push('scripts')
 <script>
 $(document).ready(function() {
-    var table = $('#users-table').DataTable({
+    var table = $('#user-documents-table').DataTable({
         processing: true,
         serverSide: true,
         ajax: {
-            url: "{{ route('users.index') }}",
+            url: "{{ route('user-documents.index', $user->id) }}",
             type: "GET",
             error: function(xhr, error, thrown) {
                 console.log('DataTables error:', error, thrown);
                 console.log('Response:', xhr.responseText);
                 // Hide processing indicator on error
-                $('#users-table_processing').hide();
+                $('#user-documents-table_processing').hide();
             }
         },
         columns: [
             {data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false},
-            {data: 'name', name: 'name'},
-            {data: 'email', name: 'email'},
-            {data: 'username', name: 'username'},
-            {data: 'roles', name: 'roles', orderable: false, searchable: false},
+            {data: 'document_type', name: 'document_type'},
+            {data: 'file_name', name: 'file_name'},
+            {data: 'file_size', name: 'file_size'},
+            {data: 'uploaded_at', name: 'uploaded_at'},
+            {data: 'status', name: 'status'},
             {data: 'action', name: 'action', orderable: false, searchable: false}
         ],
         initComplete: function() {
             // Ensure processing indicator is hidden when initialization is complete
-            $('#users-table_processing').hide();
+            $('#user-documents-table_processing').hide();
         },
         drawCallback: function() {
             // Ensure processing indicator is hidden after each draw
-            $('#users-table_processing').hide();
+            $('#user-documents-table_processing').hide();
 
             // Initialize Bootstrap tooltips
             var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));

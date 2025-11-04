@@ -58,6 +58,18 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
             Route::get('/{user}/edit', 'UsersController@edit')->name('users.edit');
             Route::patch('/{user}/update', 'UsersController@update')->name('users.update');
             Route::delete('/{user}/delete', 'UsersController@destroy')->name('users.destroy');
+
+            // User Documents Routes
+            Route::group(['prefix' => '{user}/documents'], function() {
+                Route::get('/', [App\Http\Controllers\UserDocumentsController::class, 'index'])->name('user-documents.index');
+                Route::get('/create', [App\Http\Controllers\UserDocumentsController::class, 'create'])->name('user-documents.create');
+                Route::post('/', [App\Http\Controllers\UserDocumentsController::class, 'store'])->name('user-documents.store');
+                Route::get('/{document}', [App\Http\Controllers\UserDocumentsController::class, 'show'])->name('user-documents.show');
+                Route::get('/{document}/edit', [App\Http\Controllers\UserDocumentsController::class, 'edit'])->name('user-documents.edit');
+                Route::patch('/{document}', [App\Http\Controllers\UserDocumentsController::class, 'update'])->name('user-documents.update');
+                Route::delete('/{document}', [App\Http\Controllers\UserDocumentsController::class, 'delete'])->name('user-documents.destroy');
+                Route::get('/{document}/download', [App\Http\Controllers\UserDocumentsController::class, 'download'])->name('user-documents.download');
+            });
         });
 
         /**
